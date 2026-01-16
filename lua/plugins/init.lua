@@ -13,6 +13,12 @@ return {
     end,
   },
 
+  {
+    'Civitasv/cmake-tools.nvim',
+    lazy = false,
+    opts = {}
+  },
+
   -- test new blink
   -- { import = "nvchad.blink.lazyspec" },
 

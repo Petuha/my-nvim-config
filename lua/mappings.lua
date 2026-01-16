@@ -15,4 +15,7 @@ map("n", "<C-Del>", "dw", { desc = "Delete next word with Ctrl + Delete" })
 
 map("n", "<C-c>", "a", { desc = "Enter INSERT mode from NORMAL" })
 
+map({ "n", "i", "v" }, "<C-b>", "<cmd> CMakeBuild <cr>")
+map({ "n", "i", "v" }, "<C-r>", "<cmd> CMakeRun <cr>")
+
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
