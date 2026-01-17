@@ -1,11 +1,21 @@
 require "nvchad.mappings"
 
--- add yours here
-
 local map = vim.keymap.set
 
-map("n", ";", ":", { desc = "CMD enter command mode" })
--- map("i", "jk", "<ESC>")
+
+-- base
+
+map("n", ";", ":", { desc = "CMD enter command mod" })
+map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>", { desc = "Save file" })
+map({ "n", "i", "v" }, "<C-e>", "<cmd> NvimTreeToggle <cr>", { desc = "Toggle file explorer" })
+
+map("n", "<C-c>", "a", { desc = "Enter INSERT mod from NORMAL" })
+map("v", "<C-c>", "<ESC>a", { desc = "Enter INSERT mod from VISUAL" })
+
+map({ "n", "i", "v" }, "<C-f>", "<ESC>:/", { desc = "Find" })
+map("c", "<C-f>", "<C-c>", { desc = "Find cancel" })
+
+-- delete words
 
 map("i", "<C-H>", "<C-w>", { desc = "Delete previous word with Ctrl + Backspace" })
 map("n", "<C-H>", "a<C-w><ESC>", { desc = "Delete previous word with Ctrl + Backspace" })
@@ -13,9 +23,46 @@ map("n", "<C-H>", "a<C-w><ESC>", { desc = "Delete previous word with Ctrl + Back
 map("i", "<C-Del>", "<C-o>dw", { desc = "Delete next word with Ctrl + Delete" })
 map("n", "<C-Del>", "dw", { desc = "Delete next word with Ctrl + Delete" })
 
-map("n", "<C-c>", "a", { desc = "Enter INSERT mode from NORMAL" })
 
-map({ "n", "i", "v" }, "<C-b>", "<cmd> CMakeBuild <cr>")
-map({ "n", "i", "v" }, "<C-r>", "<cmd> CMakeRun <cr>")
+-- undo / redo
 
--- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
+map({ "n", "i", "v" }, "<C-z>", "<cmd> undo <cr>", { desc = "Undo" })
+map({ "n", "i", "v" }, "<C-y>", "<cmd> redo <cr>", { desc = "Redo" })
+
+
+-- VISUAL mod
+
+map("i", "<C-v>", "<ESC>lv", { desc = "Enter VISUAL mod" }) -- 'l' - for 1 tile to right
+map("n", "<C-v>", "v", { desc = "Enter VISUAL mod" })
+map("v", "<C-v>", "<ESC>", { desc = "Exit VISUAL mod" })
+map({ "n", "v" }, "<M-v>", "<C-v>", { desc = "Enter V-BLOCK mod" })
+
+map("v", "<BS>", "d", { desc = "Delete selection with Backspace" })
+
+map("n", "<C-a>", "ggVG", { silent = true, desc = "Select all" })
+map("i", "<C-a>", "<ESC>ggVG", { silent = true, desc = "Select all" })
+
+map("v", "c", '"+y', { desc = "Copy on c" })
+map("v", "x", '"+x', { desc = "Cut on x" })
+
+
+-- buffers
+
+map({ "n", "i", "v" }, "<C-PageDown>", function()
+  require("nvchad.tabufline").next()
+end, { desc = "Prev buffer" })
+map({ "n", "i", "v" }, "<C-PageUp>", function()
+  require("nvchad.tabufline").prev()
+end,{ desc = "Next buffer" })
+
+map({ "n", "i", "v" }, "<C-n>", "<cmd> enew <cr>", { desc = "New buffer" })
+map({ "n", "i", "v" }, "<C-x>", function()
+  require("nvchad.tabufline").close_buffer()
+end, { desc = "Close buffer" })
+
+
+-- CMake
+
+map({ "n", "i", "v" }, "<C-b>", "<cmd> CMakeBuild <cr>", { desc = "Build with cmake" })
+map({ "n", "i", "v" }, "<C-r>", "<cmd> CMakeRun <cr>", { desc = "Build with cmake" })
+
