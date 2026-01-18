@@ -10,7 +10,7 @@ map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>", { desc = "Save file" })
 map({ "n", "i", "v" }, "<C-e>", "<cmd> NvimTreeToggle <cr>", { desc = "Toggle file explorer" })
 
 map("n", "<C-c>", "a", { desc = "Enter INSERT mod from NORMAL" })
-map("v", "<C-c>", "<ESC>a", { desc = "Enter INSERT mod from VISUAL" })
+-- map("v", "<C-c>", "<ESC>a", { desc = "Enter INSERT mod from VISUAL" })
 
 map({ "n", "i", "v" }, "<C-f>", "<ESC>:/", { desc = "Find" })
 map("c", "<C-f>", "<C-c>", { desc = "Find cancel" })
@@ -39,8 +39,8 @@ map({ "n", "v" }, "<M-v>", "<C-v>", { desc = "Enter V-BLOCK mod" })
 
 map("v", "<BS>", "d", { desc = "Delete selection with Backspace" })
 
-map("n", "<C-a>", "ggVG", { silent = true, desc = "Select all" })
-map("i", "<C-a>", "<ESC>ggVG", { silent = true, desc = "Select all" })
+map("n", "<C-a>", "ggVG", { desc = "Select all" })
+map({ "i", "v" }, "<C-a>", "<ESC>ggVG", { desc = "Select all" })
 
 map("v", "c", '"+y', { desc = "Copy on c" })
 map("v", "x", '"+x', { desc = "Cut on x" })
@@ -66,3 +66,15 @@ end, { desc = "Close buffer" })
 map({ "n", "i", "v" }, "<C-b>", "<cmd> CMakeBuild <cr>", { desc = "Build with cmake" })
 map({ "n", "i", "v" }, "<C-r>", "<cmd> CMakeRun <cr>", { desc = "Build with cmake" })
 
+
+-- clang-format
+
+map("v", "f", function()
+  require("conform").format({
+    lsp_fallback = false,
+    async = false,
+    timeout_ms = 500,
+  }, function()
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+  end)
+end, { desc = "Format selection" })

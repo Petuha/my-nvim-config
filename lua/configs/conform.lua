@@ -3,6 +3,28 @@ local options = {
     lua = { "stylua" },
     -- css = { "prettier" },
     -- html = { "prettier" },
+    cpp = { "clang-format" },
+    c = { "clang-format" },
+  },
+
+  formatters = {
+    ["clang-format"] = {
+      prepend_args = {
+        "--style={ \
+          BasedOnStyle: Google, \
+          UseTab: Never, \
+          IndentWidth: 2, \
+          TabWidth: 4, \
+          AccessModifierOffset: -2, \
+          IndentCaseLabels: false, \
+          AlignAfterOpenBracket: Align, \
+          PointerAlignment: Left, \
+          BreakBeforeBraces: Attach, \
+          AllowShortBlocksOnASingleLine: true, \
+          KeepEmptyLinesAtTheStartOfBlocks: true \
+        }",
+      },
+    },
   },
 
   -- format_on_save = {
