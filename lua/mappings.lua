@@ -78,3 +78,20 @@ map("v", "f", function()
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
   end)
 end, { desc = "Format selection" })
+
+
+-- debugger
+
+map("n", "<F5>", function() require("dap").continue() end, { desc = "DAP Continue" })
+map("n", "<F6>", function() require("dap").terminate() end, { desc = "DAP Terminate" })
+map("n", "<F10>", function() require("dap").step_over() end, { desc = "DAP Step Over" })
+map("n", "<F9>", function() require("dap").step_into() end, { desc = "DAP Step Into" })
+map("n", "<F12>", function() require("dap").step_out() end, { desc = "DAP Step Out" })
+
+map("n", "<leader>db", function() require("dap").toggle_breakpoint() end, { desc = "DAP Toggle Breakpoint" })
+map("n", "<leader>dB", function()
+  require("dap").set_breakpoint(vim.fn.input('Breakpoint condition: '))
+end, { desc = "DAP Conditional Breakpoint" })
+
+map("n", "<leader>du", function() require("dapui").toggle() end, { desc = "DAP Toggle UI" })
+-- map("n", "<leader>dr", function() require("dap").repl.open() end, { desc = "DAP Open REPL" })

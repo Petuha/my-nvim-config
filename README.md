@@ -42,3 +42,26 @@ undo/redo на `CTRL + Z` / `CTRL + Y`
 
 Запуск executable `CTRL + R`
 
+---
+
+# clang-format
+
+В VISUAL моде можно нажать `F` и отформатировать selection согласно clang-format.
+
+---
+
+# Debugging
+
+`<leader>` - пробел
+
+Поставить/убрать BreakPoint - `<leader>db`
+
+Поставить BreakPoint с условием - `<leader>dB`
+
+Включить/отключить ui дебаггера - `<leader>du`
+
+Запустить - `F5`
+
+Выйти - `F6`
+
+Шаг с обходом/заходом/выходом - `F10` / `F9` / `F12`
