@@ -4,3 +4,8 @@ require "nvchad.options"
 
 -- local o = vim.o
 -- o.cursorlineopt ='both' -- to enable cursorline!
+
+local opt = vim.opt
+
+opt.wrap = true
+opt.linebreak = true

@@ -15,6 +15,11 @@ map("n", "<C-c>", "a", { desc = "Enter INSERT mod from NORMAL" })
 map({ "n", "i", "v" }, "<C-f>", "<ESC>:/", { desc = "Find" })
 map("c", "<C-f>", "<C-c>", { desc = "Find cancel" })
 
+map("i", "<Up>", "<C-o>gk", { desc = "Move up" })
+map({ "n", "v" }, "<Up>", "gk", { desc = "Move up" })
+map("i", "<Down>", "<C-o>gj", { desc = "Move down" })
+map({ "n", "v" }, "<Down>", "gj", { desc = "Move down" })
+
 -- delete words
 
 map("i", "<C-H>", "<C-w>", { desc = "Delete previous word with Ctrl + Backspace" })
@@ -37,7 +42,7 @@ map("n", "<C-v>", "v", { desc = "Enter VISUAL mod" })
 map("v", "<C-v>", "<ESC>", { desc = "Exit VISUAL mod" })
 map({ "n", "v" }, "<M-v>", "<C-v>", { desc = "Enter V-BLOCK mod" })
 
-map("v", "<BS>", "d", { desc = "Delete selection with Backspace" })
+map("v", "<BS>", "<Del>", { desc = "Delete selection with Backspace" })
 
 map("n", "<C-a>", "ggVG", { desc = "Select all" })
 map({ "i", "v" }, "<C-a>", "<ESC>ggVG", { desc = "Select all" })
@@ -63,7 +68,7 @@ end, { desc = "Close buffer" })
 
 -- CMake
 
-map({ "n", "i", "v" }, "<C-b>", "<cmd> CMakeBuild <cr>", { desc = "Build with cmake" })
+map({ "n", "i", "v" }, "<C-b>", "<cmd> CMakeBuild <cr>", { desc = "Run with cmake" })
 map({ "n", "i", "v" }, "<C-r>", "<cmd> CMakeRun <cr>", { desc = "Build with cmake" })
 
 

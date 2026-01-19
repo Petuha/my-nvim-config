@@ -1,3 +1,9 @@
+# Зависимости
+
+```bash
+sudo pacman -S neovim ttf-jetbrains-mono-nerd
+```
+
 # Бинды
 
 Войти в CMD мод через `;`
@@ -32,8 +38,6 @@ undo/redo на `CTRL + Z` / `CTRL + Y`
 
 Новый буффер на `CTRL + N`, закрыть буффер на `CTRL + X`
 
----
-
 # CMake
 
 Генерация `:CMAkeGenerate`
@@ -42,13 +46,9 @@ undo/redo на `CTRL + Z` / `CTRL + Y`
 
 Запуск executable `CTRL + R`
 
----
-
 # clang-format
 
 В VISUAL моде можно нажать `F` и отформатировать selection согласно clang-format.
-
----
 
 # Debugging
 
