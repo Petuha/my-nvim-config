@@ -20,6 +20,7 @@ map({ "n", "v" }, "<Up>", "gk", { desc = "Move up" })
 map("i", "<Down>", "<C-o>gj", { desc = "Move down" })
 map({ "n", "v" }, "<Down>", "gj", { desc = "Move down" })
 
+
 -- delete words
 
 map("i", "<C-H>", "<C-w>", { desc = "Delete previous word with Ctrl + Backspace" })
@@ -36,11 +37,6 @@ map({ "n", "i", "v" }, "<C-y>", "<cmd> redo <cr>", { desc = "Redo" })
 
 
 -- VISUAL mod
-
-map("i", "<C-v>", "<ESC>lv", { desc = "Enter VISUAL mod" }) -- 'l' - for 1 tile to right
-map("n", "<C-v>", "v", { desc = "Enter VISUAL mod" })
-map("v", "<C-v>", "<ESC>", { desc = "Exit VISUAL mod" })
-map({ "n", "v" }, "<M-v>", "<C-v>", { desc = "Enter V-BLOCK mod" })
 
 map("v", "<BS>", "<Del>", { desc = "Delete selection with Backspace" })
 
