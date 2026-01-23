@@ -2,24 +2,61 @@ require "nvchad.mappings"
 
 local map = vim.keymap.set
 
+local function press(keys)
+    local termcodes = vim.api.nvim_replace_termcodes(keys, true, false, true)
+    vim.api.nvim_feedkeys(termcodes, "n", true)
+end
+
+local function is_first_char()
+  return vim.fn.col('.') == 1
+end
+
+local function is_last_char()
+  return vim.fn.col('.') >= vim.fn.col('$') - 1
+end
+
+local function from_insert_to_normal()
+  if is_first_char() then
+    press("<ESC>")
+  else
+    press("<ESC>l")
+  end
+end
+
 
 -- base
 
 map("n", ";", ":", { desc = "CMD enter command mod" })
 map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>", { desc = "Save file" })
-map({ "n", "i", "v" }, "<C-e>", "<cmd> NvimTreeToggle <cr>", { desc = "Toggle file explorer" })
+map({ "n", "i", "v" }, "<C-e>", "<ESC><cmd> NvimTreeToggle <cr>", { desc = "File explorer toggle" })
 
-map("n", "<C-c>", "a", { desc = "Enter INSERT mod from NORMAL" })
--- map("v", "<C-c>", "<ESC>a", { desc = "Enter INSERT mod from VISUAL" })
 
-map({ "n", "i", "v" }, "<C-f>", "<ESC>:/", { desc = "Find" })
+map("n", "<C-x>", "i", { desc = "ChangeMod To INSERT" })
+map("n", "a", "i", { desc = "ChangeMod To INSERT" })
+map("i", "<C-x>", function()
+  from_insert_to_normal()
+end, { desc = "ChangeMod To NORMAL" })
+
+map("v", "<C-x>", "<ESC>", { desc = "ChangeMod To NORMAL" })
+map({ "n", "i", "v" }, "<C-c>", "")
+
+map({ "n", "v" }, "<C-f>", "<ESC>/", { desc = "Find" })
+map("i", "<C-f>", function()
+  from_insert_to_normal()
+  press("<ESC>/")
+end, { desc = "Find" })
 map("c", "<C-f>", "<C-c>", { desc = "Find cancel" })
+
+
+-- navigation
 
 map("i", "<Up>", "<C-o>gk", { desc = "Move up" })
 map({ "n", "v" }, "<Up>", "gk", { desc = "Move up" })
 map("i", "<Down>", "<C-o>gj", { desc = "Move down" })
 map({ "n", "v" }, "<Down>", "gj", { desc = "Move down" })
 
+-- should rebind pgup and pgdown here
+-- default ctrl + d begaviour should be on PageDown
 
 -- delete words
 
@@ -32,40 +69,96 @@ map("n", "<C-Del>", "dw", { desc = "Delete next word with Ctrl + Delete" })
 
 -- undo / redo
 
-map({ "n", "i", "v" }, "<C-z>", "<cmd> undo <cr>", { desc = "Undo" })
-map({ "n", "i", "v" }, "<C-y>", "<cmd> redo <cr>", { desc = "Redo" })
+map({ "n", "i", "v" }, "<C-z>", "<cmd> undo <cr>", { desc = "Change Undo" })
+map({ "n", "i", "v" }, "<C-y>", "<cmd> redo <cr>", { desc = "Change Redo" })
 
 
 -- VISUAL mod
 
-map("v", "<BS>", "<Del>", { desc = "Delete selection with Backspace" })
+map("v", "<BS>", "<Del>", { desc = "VISUAL delete selection" })
 
-map("n", "<C-a>", "ggVG", { desc = "Select all" })
-map({ "i", "v" }, "<C-a>", "<ESC>ggVG", { desc = "Select all" })
+map({ "n", "i", "v" }, "<C-a>", "<ESC>ggVG", { desc = "Select all" })
 
-map("v", "c", '"+y', { desc = "Copy on c" })
-map("v", "x", '"+x', { desc = "Cut on x" })
+map("v", "c", '"+y', { desc = "VISUAL copy" })
+map("v", "x", '"+x', { desc = "VISUAL cut" })
+
+map("i", "<S-Up>", function()
+  from_insert_to_normal()
+  press("vgko<Left>o")
+end, { desc = "VISUAL up from NORMAL" })
+map("i", "<C-S-Up>", function()
+  from_insert_to_normal()
+  press("v<C-Up>o<Left>o")
+end, { desc = "VISUAL up from NORMAL" })
+
+map("i", "<S-Down>", function()
+  from_insert_to_normal()
+  press("vgj")
+end, { desc = "VISUAL down from NORMAL" })
+map("i", "<C-S-Down>", function()
+  from_insert_to_normal()
+  press("v<C-Down>")
+end, { desc = "VISUAL down from NORMAL" })
+
+map("i", "<S-Left>", function()
+  press("<Left>")
+  from_insert_to_normal()
+  press("v")
+end, { desc = "VISUAL left from NORMAL" })
+map("i", "<C-S-Left>", function()
+  press("<Left>")
+  from_insert_to_normal()
+  press("v<C-Left>")
+end, { desc = "VISUAL left from NORMAL" })
+
+map("i", "<S-Right>", function()
+  from_insert_to_normal()
+  press("v<Right>")
+end, { desc = "VISUAL right from NORMAL" })
+map("i", "<C-S-Right>", function()
+  from_insert_to_normal()
+  press("v<C-Right>")
+end, { desc = "VISUAL right from NORMAL" })
+
+map("n", "<S-Up>", "vgk", { desc = "VISUAL up from NORMAL" })
+map("n", "<S-Down>", "vgj", { desc = "VISUAL down from NORMAL" })
+map("n", "<S-Left>", "v<Left>", { desc = "VISUAL left from NORMAL" })
+map("n", "<S-Right>", "v<Right>", { desc = "VISUAL right from NORMAL" })
+map("n", "<C-S-Up>", "v<C-Up>", { desc = "VISUAL up from NORMAL" })
+map("n", "<C-S-Down>", "v<C-Down>", { desc = "VISUAL down from NORMAL" })
+map("n", "<C-S-Left>", "v<C-Left>", { desc = "VISUAL left from NORMAL" })
+map("n", "<C-S-Right>", "v<C-Right>", { desc = "VISUAL right from NORMAL" })
+
+map("v", "<S-Up>", "gk")
+map("v", "<S-Down>", "gj")
+map("v", "<S-Left>", "<Left>")
+map("v", "<S-Right>", "<Right>")
+map("v", "<C-S-Up>", "<C-Up>")
+map("v", "<C-S-Down>", "<C-Down>")
+map("v", "<C-S-Left>", "<C-Left>")
+map("v", "<C-S-Right>", "<C-Right>")
 
 
 -- buffers
 
 map({ "n", "i", "v" }, "<C-PageDown>", function()
   require("nvchad.tabufline").next()
-end, { desc = "Prev buffer" })
+end, { desc = "Buffer prev" })
 map({ "n", "i", "v" }, "<C-PageUp>", function()
   require("nvchad.tabufline").prev()
-end,{ desc = "Next buffer" })
+end,{ desc = "Buffer next" })
 
 map({ "n", "i", "v" }, "<C-n>", "<cmd> enew <cr>", { desc = "New buffer" })
-map({ "n", "i", "v" }, "<C-x>", function()
+map({ "n", "i", "v" }, "<C-q>", function()
   require("nvchad.tabufline").close_buffer()
-end, { desc = "Close buffer" })
+end, { desc = "Buffer close" })
 
 
 -- CMake
 
-map({ "n", "i", "v" }, "<C-b>", "<cmd> CMakeBuild <cr>", { desc = "Run with cmake" })
-map({ "n", "i", "v" }, "<C-r>", "<cmd> CMakeRun <cr>", { desc = "Build with cmake" })
+map({ "n", "i", "v" }, "<C-b>", "<cmd> CMakeBuild <cr>", { desc = "CMake run" })
+map({ "n", "i", "v" }, "<C-r>", "<cmd> CMakeRun <cr>", { desc = "CMake build" })
+map({ "n" }, "<leader>cg", "<cmd> CMakeGenerate <cr>", { desc = "CMake generate" })
 
 
 -- clang-format
@@ -76,7 +169,7 @@ map("v", "f", function()
     async = false,
     timeout_ms = 500,
   }, function()
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+    press("<ESC>")
   end)
 end, { desc = "Format selection" })
 
@@ -84,7 +177,8 @@ end, { desc = "Format selection" })
 -- debugger
 
 map("n", "<F5>", function() require("dap").continue() end, { desc = "DAP Continue" })
-map("n", "<F6>", function() require("dap").terminate() end, { desc = "DAP Terminate" })
+-- <F17> == SHIFT F5
+map("n", "<F17>", function() require("dap").terminate() end, { desc = "DAP Terminate" })
 map("n", "<F10>", function() require("dap").step_over() end, { desc = "DAP Step Over" })
 map("n", "<F9>", function() require("dap").step_into() end, { desc = "DAP Step Into" })
 map("n", "<F12>", function() require("dap").step_out() end, { desc = "DAP Step Out" })

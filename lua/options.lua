@@ -9,3 +9,4 @@ local opt = vim.opt
 
 opt.wrap = true
 opt.linebreak = true
+vim.opt.virtualedit = "onemore"
