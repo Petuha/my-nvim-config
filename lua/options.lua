@@ -1,9 +1,6 @@
 require "nvchad.options"
 
--- add yours here!
-
--- local o = vim.o
--- o.cursorlineopt ='both' -- to enable cursorline!
+vim.opt.guicursor:append "t:ver25-blinkon0"
 
 local opt = vim.opt
 
