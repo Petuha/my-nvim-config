@@ -5,7 +5,6 @@ return {
     opts = require "configs.conform",
   },
 
-  -- These are some examples, uncomment them if you want to see them work!
   {
     "neovim/nvim-lspconfig",
     config = function()
@@ -14,11 +13,20 @@ return {
   },
 
   {
+    "Wansmer/langmapper.nvim",
+    lazy = false,
+    priority = 999,
+    config = function()
+      require("langmapper").setup({})
+    end,
+  },
+
+  {
     'Civitasv/cmake-tools.nvim',
     lazy = false,
     opts = {}
   },
-
+  
   {
     "nvim-tree/nvim-tree.lua",
     opts = {
