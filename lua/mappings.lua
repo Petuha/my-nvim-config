@@ -12,7 +12,7 @@ local function is_first_char()
 end
 
 local function is_last_char()
-  return vim.fn.col('.') >= vim.fn.col('$') - 1
+  return vim.fn.col('.') >= vim.fn.col('$')
 end
 
 local function from_insert_to_normal()
@@ -50,21 +50,69 @@ map("c", "<C-f>", "<C-c>", { desc = "Find cancel" })
 
 -- navigation
 
+map("n", "<Left>", function()
+  local cur_line = vim.fn.line('.')
+  if vim.fn.col('.') == 1 then
+    if cur_line > 1 then
+      local prev_line = cur_line - 1
+      local prev_line_len = #vim.fn.getbufline(vim.api.nvim_get_current_buf(), prev_line)[1]
+      vim.api.nvim_win_set_cursor(0, {prev_line, prev_line_len})
+    end
+  else
+    vim.cmd("normal! h")
+  end
+end, { desc = "Move left" })
+
 map("i", "<Up>", "<C-o>gk", { desc = "Move up" })
 map({ "n", "v" }, "<Up>", "gk", { desc = "Move up" })
 map("i", "<Down>", "<C-o>gj", { desc = "Move down" })
 map({ "n", "v" }, "<Down>", "gj", { desc = "Move down" })
 
--- should rebind pgup and pgdown here
--- default ctrl + d begaviour should be on PageDown
+map("i", "<PageUp>", "<C-o><C-u>", { desc = "Move half page up" })
+map("i", "<PageDown>", "<C-o><C-d>", { desc = "Move half page down" })
+map({ "n", "v" }, "<PageUp>", "<C-u>", { desc = "Move half page up" })
+map({ "n", "v" }, "<PageDown>", "<C-d>", { desc = "Move half page down" })
+map({ "n", "i", "v" }, "<C-u>", "")
+map({ "n", "i", "v" }, "<C-d>", "")
+
+local function open_file_under_the_cursor()
+  local file_path = vim.fn.expand("<cfile>")
+  -- "^%a+://" - link like "http://..."
+  if file_path:match("^%a+://") or file_path:match("^~") or file_path:match("^/") then
+    vim.ui.open(file_path)
+  else
+    local current_dir = vim.fn.expand("%:p:h")
+    local absolute_path = current_dir .. "/" .. file_path
+    vim.ui.open(absolute_path)
+  end
+end
+map("n", "<F4>", function()
+  open_file_under_the_cursor()
+end, { desc = "Open File under the cursor" })
+map("i", "<F4>", function()
+  from_insert_to_normal()
+  open_file_under_the_cursor()
+  press("i")
+end, { desc = "Open File under the cursor" })
+
 
 -- delete words
 
-map("i", "<C-H>", "<C-w>", { desc = "Delete previous word with Ctrl + Backspace" })
-map("n", "<C-H>", "a<C-w><ESC>", { desc = "Delete previous word with Ctrl + Backspace" })
+map("n", "<Del>", "")
+map("n", "<C-Del>", "")
+map("n", "<S-Del>", "")
+map("n", "<C-S-Del>", "")
 
-map("i", "<C-Del>", "<C-o>dw", { desc = "Delete next word with Ctrl + Delete" })
-map("n", "<C-Del>", "dw", { desc = "Delete next word with Ctrl + Delete" })
+map("n", "D", "\"_D")
+map({ "n", "v" }, "d", "\"_d")
+
+map("i", "<C-w>", "")
+
+map("i", "<C-H>", "<C-w>", { desc = "Delete previous word with Ctrl + Backspace" })
+-- map("n", "<C-H>", "a<C-w><ESC>", { desc = "Delete previous word with Ctrl + Backspace" })
+
+map("i", "<C-Del>", "<C-o>\"_dw", { desc = "Delete next word with Ctrl + Delete" })
+-- map("n", "<C-Del>", "dw", { desc = "Delete next word with Ctrl + Delete" })
 
 
 -- undo / redo
@@ -75,11 +123,12 @@ map({ "n", "i", "v" }, "<C-y>", "<cmd> redo <cr>", { desc = "Change Redo" })
 
 -- VISUAL mod
 
-map("v", "<BS>", "<Del>", { desc = "VISUAL delete selection" })
+map("v", "<BS>", "\"_d", { desc = "VISUAL delete selection" })
+map("v", "<Del>", "\"_d", { desc = "VISUAL delete selection" })
 
 map({ "n", "i", "v" }, "<C-a>", "<ESC>ggVG", { desc = "Select all" })
 
-map("v", "c", '"+y', { desc = "VISUAL copy" })
+map("v", "c", '"+ygv<Esc>', { desc = "VISUAL copy" })
 map("v", "x", '"+x', { desc = "VISUAL cut" })
 
 map("i", "<S-Up>", function()
@@ -147,6 +196,14 @@ end, { desc = "Buffer prev" })
 map({ "n", "i", "v" }, "<C-PageUp>", function()
   require("nvchad.tabufline").prev()
 end,{ desc = "Buffer next" })
+
+map({ "n", "i", "v" }, "<C-S-PageDown>", function()
+  require("nvchad.tabufline").move_buf(1)
+end, { desc = "Move buffer right" })
+map({ "n", "i", "v" }, "<C-S-PageUp>", function()
+  require("nvchad.tabufline").move_buf(-1)
+end, { desc = "Move buffer left" })
+
 
 map({ "n", "i", "v" }, "<C-n>", "<cmd> enew <cr>", { desc = "New buffer" })
 map({ "n", "i", "v" }, "<C-q>", function()

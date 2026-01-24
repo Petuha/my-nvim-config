@@ -12,9 +12,11 @@ sudo pacman -S neovim ttf-jetbrains-mono-nerd
 
 Открыть/закрыть древо файлов на `CTRL + E`
 
-Переключение на INSERT мод через `CTRL + C`
+Переключение на NORMAL мод через `CTRL + X`
 
 Поиск по файлу через `CTRL + F`
+
+Открыть файл по заданному пути через `F4`
 
 ---
 
@@ -24,7 +26,7 @@ undo/redo на `CTRL + Z` / `CTRL + Y`
 
 ---
 
-Переход в VISUAL мод на `CTRL + V`, V-BLOCK мод через `ALT + V`
+Выделение слов через `SHIFT` и стрелки
 
 Удаление selection-а через `BACKSPACE`
 
@@ -36,11 +38,15 @@ undo/redo на `CTRL + Z` / `CTRL + Y`
 
 Переключение между буфферами на `CTRL + PAGEUP` / `CTRL + PAGEDOWN`
 
-Новый буффер на `CTRL + N`, закрыть буффер на `CTRL + X`
+Изменить местоположение буффера на `CTRL + SHIFT + PAGEUP` / `CTRL + SHIFT + PAGEDOWN`
+
+Новый буффер на `CTRL + N`, закрыть буффер на `CTRL + Q`
 
 # CMake
 
-Генерация `:CMAkeGenerate`
+`<leader>` - пробел
+
+Генерация `<leader>cg`
 
 Сборка `CTRL + B`
 
@@ -50,7 +56,7 @@ undo/redo на `CTRL + Z` / `CTRL + Y`
 
 В VISUAL моде можно нажать `F` и отформатировать selection согласно clang-format.
 
-# Debugging
+# Debugger
 
 `<leader>` - пробел
 
@@ -60,8 +66,6 @@ undo/redo на `CTRL + Z` / `CTRL + Y`
 
 Включить/отключить ui дебаггера - `<leader>du`
 
-Запустить - `F5`
-
-Выйти - `F6`
+Запустить/закончить - `F5` / `SHIFT + F5`
 
 Шаг с обходом/заходом/выходом - `F10` / `F9` / `F12`
