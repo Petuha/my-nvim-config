@@ -50,6 +50,17 @@ map("c", "<C-f>", "<C-c>", { desc = "Find cancel" })
 
 -- navigation
 
+local function resolve_mod(keys)
+  if vim.api.nvim_get_mode().mode == "i" then
+    keys = "<C-o>" .. keys
+  end
+  return keys
+end
+
+local function set_cursor_to_end_after_move(keys)
+  
+end
+
 map("n", "<Left>", function()
   local cur_line = vim.fn.line('.')
   if vim.fn.col('.') == 1 then
@@ -62,6 +73,36 @@ map("n", "<Left>", function()
     vim.cmd("normal! h")
   end
 end, { desc = "Move left" })
+
+map({ "n", "i", "v" }, "<C-Left>", function()
+  local start_line = vim.fn.line(".")
+  local keys = resolve_mod("<C-Left>")
+  press(keys)
+  vim.schedule(function()
+    local cur_line = vim.fn.line(".")
+    if cur_line ~= start_line then
+      local cur_line_len = #vim.fn.getbufline(vim.api.nvim_get_current_buf(), cur_line)[1]
+      vim.api.nvim_win_set_cursor(0, {cur_line, cur_line_len})
+    end
+  end)
+end, { desc = "Move word left" })
+
+map({ "n", "i", "v" }, "<C-Right>", function()
+  local last_char = is_last_char()
+  local start_line = vim.fn.line(".")
+  local keys = resolve_mod("<C-Right>")
+  press(keys)
+  if last_char then
+    return
+  end
+  vim.schedule(function()
+    local cur_line = vim.fn.line(".")
+    if cur_line ~= start_line then
+      local start_line_len = #vim.fn.getbufline(vim.api.nvim_get_current_buf(), start_line)[1]
+      vim.api.nvim_win_set_cursor(0, {start_line, start_line_len})
+    end
+  end)
+end, { desc = "Move word right" })
 
 map("i", "<Up>", "<C-o>gk", { desc = "Move up" })
 map({ "n", "v" }, "<Up>", "gk", { desc = "Move up" })
