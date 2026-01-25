@@ -57,10 +57,6 @@ local function resolve_mod(keys)
   return keys
 end
 
-local function set_cursor_to_end_after_move(keys)
-  
-end
-
 map("n", "<Left>", function()
   local cur_line = vim.fn.line('.')
   if vim.fn.col('.') == 1 then
@@ -116,6 +112,9 @@ map({ "n", "v" }, "<PageDown>", "<C-d>", { desc = "Move half page down" })
 map({ "n", "i", "v" }, "<C-u>", "")
 map({ "n", "i", "v" }, "<C-d>", "")
 
+map({ "n", "i", "v" }, "<C-Up>", "<cmd>normal! <C-y><cr>", { desc = "Move screen up" })
+map({ "n", "i", "v" }, "<C-Down>", "<cmd>normal! <C-e><cr>", { desc = "Move screen down" })
+
 local function open_file_under_the_cursor()
   local file_path = vim.fn.expand("<cfile>")
   -- "^%a+://" - link like "http://..."
@@ -166,11 +165,14 @@ map({ "n", "i", "v" }, "<C-y>", "<cmd> redo <cr>", { desc = "Change Redo" })
 
 map("v", "<BS>", "\"_d", { desc = "VISUAL delete selection" })
 map("v", "<Del>", "\"_d", { desc = "VISUAL delete selection" })
+map("v", "d", "\"_d", { desc = "VISUAL delete selection" })
 
-map({ "n", "i", "v" }, "<C-a>", "<ESC>ggVG", { desc = "Select all" })
+map({ "n", "i", "v" }, "<C-a>", "<ESC>ggVG", { desc = "VISUAL select all" })
 
 map("v", "c", '"+ygv<Esc>', { desc = "VISUAL copy" })
 map("v", "x", '"+x', { desc = "VISUAL cut" })
+map("v", "p", '"_dP', { desc = "VISUAL paste" })
+map("v", "P", '"_dP', { desc = "VISUAL paste" })
 
 map("i", "<S-Up>", function()
   from_insert_to_normal()
