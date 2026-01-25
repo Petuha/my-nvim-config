@@ -108,18 +108,25 @@ return {
     end,
   },
 
+  {
+    "windwp/nvim-autopairs",
+    config = function(_, opts)
+      require("nvim-autopairs").setup(opts)
 
+      local npairs = require "nvim-autopairs"
+      local Rule = require "nvim-autopairs.rule"
+      local cond = require "nvim-autopairs.conds"
 
-  -- test new blink
-  -- { import = "nvchad.blink.lazyspec" },
+      npairs.add_rules {
+        Rule("<", ">")
+        -- Проверять, есть ли символ перед курсором, и если это '>', просто переместить курсор
+        :with_move(function(opts)
+          return opts.char == ">"
+        end)
+        -- Не создавать пару, если следующий символ уже '>'
+        :with_pair(cond.not_after_text ">"),
+      }
+    end,
+  },
 
-  -- {
-  -- 	"nvim-treesitter/nvim-treesitter",
-  -- 	opts = {
-  -- 		ensure_installed = {
-  -- 			"vim", "lua", "vimdoc",
-  --      "html", "css"
-  -- 		},
-  -- 	},
-  -- },
 }
