@@ -49,6 +49,23 @@ map("c", "<C-f>", "<C-c>", { desc = "Find cancel" })
 
 map({ "n", "i", "v" }, "<C-g>", "<cmd>normal! za<cr>", { desc = "Fold toggle" })
 
+map({ "n", "i", "v" }, "<C-t>", function()
+  local oldfiles = vim.v.oldfiles
+  local open_buffers = {}
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(bufnr) then
+      open_buffers[vim.api.nvim_buf_get_name(bufnr)] = true
+    end
+  end
+  for _, file in ipairs(oldfiles) do
+    if not open_buffers[file] and vim.fn.filereadable(file) == 1 then
+      vim.cmd("edit " .. file)
+      return
+    end
+  end
+  print "No recently closed files found."
+end, { desc = "Open last closed file" })
+
 
 -- navigation
 
