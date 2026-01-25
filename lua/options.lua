@@ -8,6 +8,11 @@ opt.wrap = true
 opt.linebreak = true
 vim.opt.virtualedit = "onemore"
 
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldenable = true
+vim.opt.foldlevel = 99
+
 -- экранирование спецсимволов для корректной работы langmap
 local function escape(str)
   local escape_chars = [[;,."'\]]

@@ -129,4 +129,14 @@ return {
     end,
   },
 
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = require "configs.treesitter",
+  },
+
+  {
+    "mason-org/mason.nvim",
+    opts = require "configs.mason"
+  },
+
 }

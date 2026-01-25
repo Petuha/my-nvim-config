@@ -47,6 +47,8 @@ map("i", "<C-f>", function()
 end, { desc = "Find" })
 map("c", "<C-f>", "<C-c>", { desc = "Find cancel" })
 
+map({ "n", "i", "v" }, "<C-g>", "<cmd>normal! za<cr>", { desc = "Fold toggle" })
+
 
 -- navigation
 
