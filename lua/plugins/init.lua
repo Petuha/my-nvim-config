@@ -26,7 +26,7 @@ return {
     lazy = false,
     opts = {}
   },
-  
+
   {
     "nvim-tree/nvim-tree.lua",
     opts = {
@@ -85,6 +85,29 @@ return {
       end
     end
   },
+
+  {
+    "hrsh7th/nvim-cmp",
+    opts = function()
+      local conf = require "nvchad.configs.cmp"
+      local cmp = require "cmp"
+
+      conf.mapping["<Tab>"] = cmp.mapping.confirm({ select = true })
+      conf.mapping["<CR>"] = cmp.mapping(function(fallback) fallback() end)
+      conf.mapping["<Esc>"] = cmp.mapping(function(fallback)
+        if cmp.visible() then cmp.close() else fallback() end
+      end)
+      conf.mapping["<Up>"] = cmp.mapping(function(fallback)
+        if cmp.visible() then cmp.select_prev_item() else fallback() end
+      end)
+      conf.mapping["<Down>"] = cmp.mapping(function(fallback)
+        if cmp.visible() then cmp.select_next_item() else fallback() end
+      end)
+
+      return conf
+    end,
+  },
+
 
 
   -- test new blink
