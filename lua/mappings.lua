@@ -252,23 +252,23 @@ map("v", "<C-S-Right>", "<C-Right>")
 
 -- buffers
 
-map({ "n", "i", "v" }, "<C-PageDown>", function()
+map({ "n", "i" }, "<C-PageDown>", function()
   require("nvchad.tabufline").next()
 end, { desc = "Buffer prev" })
-map({ "n", "i", "v" }, "<C-PageUp>", function()
+map({ "n", "i" }, "<C-PageUp>", function()
   require("nvchad.tabufline").prev()
 end,{ desc = "Buffer next" })
 
-map({ "n", "i", "v" }, "<C-S-PageDown>", function()
+map({ "n", "i" }, "<C-S-PageDown>", function()
   require("nvchad.tabufline").move_buf(1)
 end, { desc = "Move buffer right" })
-map({ "n", "i", "v" }, "<C-S-PageUp>", function()
+map({ "n", "i" }, "<C-S-PageUp>", function()
   require("nvchad.tabufline").move_buf(-1)
 end, { desc = "Move buffer left" })
 
 
-map({ "n", "i", "v" }, "<C-n>", "<cmd> enew <cr>", { desc = "New buffer" })
-map({ "n", "i", "v" }, "<C-q>", function()
+map({ "n", "i" }, "<C-n>", "<cmd> enew <cr>", { desc = "New buffer" })
+map({ "n", "i" }, "<C-q>", function()
   require("nvchad.tabufline").close_buffer()
 end, { desc = "Buffer close" })
 
