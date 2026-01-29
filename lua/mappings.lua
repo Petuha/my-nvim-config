@@ -288,17 +288,17 @@ map("v", "<C-S-Right>", "<C-Right>")
 
 -- buffers
 
-map({ "n", "i" }, "<C-PageDown>", function()
+map({ "n", "i", "t" }, "<C-PageDown>", function()
   require("nvchad.tabufline").next()
 end, { desc = "Buffer prev" })
-map({ "n", "i" }, "<C-PageUp>", function()
+map({ "n", "i", "t" }, "<C-PageUp>", function()
   require("nvchad.tabufline").prev()
 end,{ desc = "Buffer next" })
 
-map({ "n", "i" }, "<C-S-PageDown>", function()
+map({ "n", "i", "t" }, "<C-S-PageDown>", function()
   require("nvchad.tabufline").move_buf(1)
 end, { desc = "Move buffer right" })
-map({ "n", "i" }, "<C-S-PageUp>", function()
+map({ "n", "i", "t" }, "<C-S-PageUp>", function()
   require("nvchad.tabufline").move_buf(-1)
 end, { desc = "Move buffer left" })
 
