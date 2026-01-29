@@ -137,13 +137,40 @@ map({ "n", "i", "v" }, "<C-Down>", "<cmd>normal! <C-e><cr>", { desc = "Move scre
 local function open_file_under_the_cursor()
   local file_path = vim.fn.expand("<cfile>")
   -- "^%a+://" - link like "http://..."
-  if file_path:match("^%a+://") or file_path:match("^~") or file_path:match("^/") then
+  if file_path:match("^%a+://") then
     vim.ui.open(file_path)
-  else
-    local current_dir = vim.fn.expand("%:p:h")
-    local absolute_path = current_dir .. "/" .. file_path
-    vim.ui.open(absolute_path)
+    return
   end
+
+  local absolute_path
+  if file_path:match("^:/") then
+    local clean_path = file_path:sub(3)
+    local data_dir = vim.fs.find("data", {
+      path = vim.fn.expand("%:p:h"),
+      upward = true,
+      type = "directory"
+    })[1]
+    if data_dir then
+      absolute_path = data_dir .. "/" .. clean_path
+    else
+      vim.notify("Directory 'data' not found", vim.log.levels.ERROR)
+      return
+    end
+  elseif file_path:match("^/") or file_path:match("^~/") then
+    absolute_path = file_path
+  else
+    absolute_path = vim.fn.expand("%:p:h") .. "/" .. file_path
+  end
+
+  -- local text_extensions = { "txt", "json" }
+  -- local ext = vim.fn.fnamemodify(absolute_path, ":e")
+  -- if vim.tbl_contains(text_extensions, ext) or vim.fn.filereadable(absolute_path) == 1 then
+  --   vim.cmd("edit " .. vim.fn.fnameescape(absolute_path))
+  -- else
+  --   vim.ui.open(absolute_path)
+  -- end
+  vim.cmd("edit " .. vim.fn.fnameescape(absolute_path))
+
 end
 map("n", "<F4>", function()
   open_file_under_the_cursor()
