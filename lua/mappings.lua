@@ -207,15 +207,24 @@ map({ "n", "i", "v" }, "<C-z>", "<cmd> undo <cr>", { desc = "Change Undo" })
 map({ "n", "i", "v" }, "<C-y>", "<cmd> redo <cr>", { desc = "Change Redo" })
 
 
+-- NORMAL mod
+
+map("n", "d", '"_d')
+map("n", "xx", 'dd<ESC>')
+map("n", "cc", 'yy')
+map("n", "c", '')
+map("n", "x", '')
+
+
 -- VISUAL mod
 
-map("v", "<BS>", "\"_d", { desc = "VISUAL delete selection" })
-map("v", "<Del>", "\"_d", { desc = "VISUAL delete selection" })
-map("v", "d", "\"_d", { desc = "VISUAL delete selection" })
+map("v", "<BS>", '"_d', { desc = "VISUAL delete selection" })
+map("v", "<Del>", '"_d', { desc = "VISUAL delete selection" })
+map("v", "d", '"_d', { desc = "VISUAL delete selection" })
 
 map({ "n", "i", "v" }, "<C-a>", "<ESC>ggVG", { desc = "VISUAL select all" })
 
-map("v", "c", '"+ygv<Esc>', { desc = "VISUAL copy" })
+map("v", "c", '"+ygv<ESC>', { desc = "VISUAL copy" })
 map("v", "x", '"+x', { desc = "VISUAL cut" })
 map("v", "p", '"_dP', { desc = "VISUAL paste" })
 map("v", "P", '"_dP', { desc = "VISUAL paste" })
@@ -298,6 +307,26 @@ map({ "n", "i" }, "<C-n>", "<cmd> enew <cr>", { desc = "New buffer" })
 map({ "n", "i" }, "<C-q>", function()
   require("nvchad.tabufline").close_buffer()
 end, { desc = "Buffer close" })
+
+
+-- panes
+
+local function move_to_pane(move_keys)
+  local keys = move_keys
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == "i" then
+    keys = "<ESC>" .. keys
+  elseif mode == "t" then
+    keys = "<C-\\><C-n>" .. keys
+  elseif mode == "v" then
+    keys = "<ESC>" .. keys
+  end
+  press(keys)
+end
+map({ "n", "i", "v", "t" }, "<A-Left>", function() move_to_pane("<C-w>h") end, { desc = "Move to left pane" })
+map({ "n", "i", "v", "t" }, "<A-Down>", function() move_to_pane("<C-w>j") end, { desc = "Move to lower pane" })
+map({ "n", "i", "v", "t" }, "<A-Up>", function() move_to_pane("<C-w>k") end, { desc = "Move to upper pane" })
+map({ "n", "i", "v", "t" }, "<A-Right>", function() move_to_pane("<C-w>l") end, { desc = "Move to right pane" })
 
 
 -- CMake
