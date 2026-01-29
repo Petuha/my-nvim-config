@@ -8,6 +8,7 @@ local options = {
     "html-lsp",
     "lua-language-server",
     "stylua",
+    "tree-sitter-cli"
   },
 }
 
