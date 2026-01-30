@@ -212,8 +212,8 @@ map({ "n", "i", "v" }, "<C-y>", "<cmd> redo <cr>", { desc = "Change Redo" })
 map("n", "d", '"_d')
 map("n", "xx", 'dd<ESC>')
 map("n", "cc", 'yy')
-map("n", "c", '')
-map("n", "x", '')
+map("n", "c", 'y')
+map("n", "x", 'd')
 
 
 -- VISUAL mod
