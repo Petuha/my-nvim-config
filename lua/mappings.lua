@@ -192,8 +192,6 @@ map("n", "<C-S-Del>", "")
 map("n", "D", "\"_D")
 map({ "n", "v" }, "d", "\"_d")
 
-map("i", "<C-w>", "")
-
 map("i", "<C-H>", "<C-w>", { desc = "Delete previous word with Ctrl + Backspace" })
 -- map("n", "<C-H>", "a<C-w><ESC>", { desc = "Delete previous word with Ctrl + Backspace" })
 
@@ -215,6 +213,11 @@ map("n", "cc", 'yy')
 map("n", "c", 'y')
 map("n", "x", 'd')
 
+
+-- INSERT mod
+
+map("i", "<C-w>", "<cmd> delete _ <cr>", { desc = "INSERT Delete current line" })
+map({ "n", "i" }, "<C-d>", "<cmd> t. <cr>", { desc = "INSERT Duplicate current line" })
 
 -- VISUAL mod
 
