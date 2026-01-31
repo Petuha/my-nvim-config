@@ -1,6 +1,6 @@
 require "nvchad.mappings"
 
-local map = vim.keymap.set
+-- functions
 
 local function press(keys)
     local termcodes = vim.api.nvim_replace_termcodes(keys, true, false, true)
@@ -33,6 +33,107 @@ local function get_current_buf_index()
   return -1
 end
 
+local function resolve_mod(keys)
+  if vim.api.nvim_get_mode().mode == "i" then
+    keys = "<C-o>" .. keys
+  end
+  return keys
+end
+
+local function open_file_under_the_cursor(mode)
+  local file_path = vim.fn.expand("<cfile>")
+  -- "^%a+://" - link like "http://..."
+  if file_path:match("^%a+://") then
+    vim.ui.open(file_path)
+    return
+  end
+
+  local absolute_path
+  if file_path:match("^:/") then
+    local clean_path = file_path:sub(3)
+    local data_dir = vim.fs.find("data", {
+      path = vim.fn.expand("%:p:h"),
+      upward = true,
+      type = "directory"
+    })[1]
+    if data_dir then
+      absolute_path = data_dir .. "/" .. clean_path
+    else
+      vim.notify("Directory 'data' not found", vim.log.levels.ERROR)
+      return
+    end
+  elseif file_path:match("^/") then
+    absolute_path = file_path
+  elseif file_path:match("^~/") then
+    absolute_path = vim.fn.expand(file_path)
+  else
+    absolute_path = vim.fn.expand("%:p:h") .. "/" .. file_path
+  end
+
+  if mode == "markup" then
+    absolute_path = absolute_path:gsub("images", "markup", 1) .. ".json"
+  end
+
+  if not vim.uv.fs_stat(absolute_path) then
+    vim.notify("File does not exist: " .. absolute_path, vim.log.levels.WARN)
+    return
+  end
+
+  if mode == "system" then
+    vim.ui.open(absolute_path)
+  else
+    local bufexists = vim.fn.bufexists(absolute_path) ~= 0
+    local current_buf = get_current_buf_index()
+    vim.cmd("edit " .. vim.fn.fnameescape(absolute_path))
+    local new_buf = get_current_buf_index()
+    if bufexists then
+      return
+    end
+    -- opened buffer is in the end -> move it a bit to left
+    for _ = 1, new_buf - current_buf - 1 do
+        require("nvchad.tabufline").move_buf(-1)
+    end
+  end
+end
+
+local function open_file_under_the_cursor_resolve_mod(open_mode)
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == "i" then
+    from_insert_to_normal()
+  end
+  open_file_under_the_cursor(open_mode)
+  if mode == "i" then
+    press("i")
+  end
+end
+
+local function move_buf(direction, edge)
+  local buf_index = get_current_buf_index()
+  if buf_index == edge then
+    for _ = 1, #vim.t.bufs - 1 do
+      require("nvchad.tabufline").move_buf(-direction)
+    end
+  else
+    require("nvchad.tabufline").move_buf(direction)
+  end
+end
+
+local function move_to_pane(move_keys)
+  local keys = move_keys
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == "i" then
+    keys = "<ESC>" .. keys
+  elseif mode == "t" then
+    keys = "<C-\\><C-n>" .. keys
+  elseif mode == "v" then
+    keys = "<ESC>" .. keys
+  end
+  press(keys)
+end
+
+
+
+local map = vim.keymap.set
 
 -- base
 
@@ -78,13 +179,6 @@ end, { desc = "Open last closed file" })
 
 
 -- navigation
-
-local function resolve_mod(keys)
-  if vim.api.nvim_get_mode().mode == "i" then
-    keys = "<C-o>" .. keys
-  end
-  return keys
-end
 
 map("n", "<Left>", function()
   local cur_line = vim.fn.line('.')
@@ -144,71 +238,6 @@ map({ "n", "i", "v" }, "<C-d>", "")
 map({ "n", "i", "v" }, "<C-Up>", "<cmd>normal! <C-y><cr>", { desc = "Move screen up" })
 map({ "n", "i", "v" }, "<C-Down>", "<cmd>normal! <C-e><cr>", { desc = "Move screen down" })
 
-local function open_file_under_the_cursor(mode)
-  local file_path = vim.fn.expand("<cfile>")
-  -- "^%a+://" - link like "http://..."
-  if file_path:match("^%a+://") then
-    vim.ui.open(file_path)
-    return
-  end
-
-  local absolute_path
-  if file_path:match("^:/") then
-    local clean_path = file_path:sub(3)
-    local data_dir = vim.fs.find("data", {
-      path = vim.fn.expand("%:p:h"),
-      upward = true,
-      type = "directory"
-    })[1]
-    if data_dir then
-      absolute_path = data_dir .. "/" .. clean_path
-    else
-      vim.notify("Directory 'data' not found", vim.log.levels.ERROR)
-      return
-    end
-  elseif file_path:match("^/") then
-    absolute_path = file_path
-  elseif file_path:match("^~/") then
-    absolute_path = vim.fn.expand(file_path)
-  else
-    absolute_path = vim.fn.expand("%:p:h") .. "/" .. file_path
-  end
-
-  if mode == "markup" then
-    absolute_path = absolute_path:gsub("images", "markup", 1) .. ".json"
-  end
-
-  if not vim.uv.fs_stat(absolute_path) then
-    vim.notify("File does not exist: " .. absolute_path, vim.log.levels.WARN)
-    return
-  end
-
-  if mode == "system" then
-    vim.ui.open(absolute_path)
-  else
-    local bufexists = vim.fn.bufexists(absolute_path) ~= 0
-    local current_buf = get_current_buf_index()
-    vim.cmd("edit " .. vim.fn.fnameescape(absolute_path))
-    local new_buf = get_current_buf_index()
-    if bufexists then
-      return
-    end
-    -- opened buffer is in the end -> move it a bit to left
-    for _ = 1, new_buf - current_buf - 1 do
-        require("nvchad.tabufline").move_buf(-1)
-    end
-  end
-end
-local function open_file_under_the_cursor_resolve_mod(open_mode)
-  local mode = vim.api.nvim_get_mode().mode
-  if mode == "i" then
-    from_insert_to_normal()
-  end
-  open_file_under_the_cursor(open_mode)
-  if mode == "i" then
-    press("i")
-  end
-end
 map({ "n", "i" }, "<F4>", function() open_file_under_the_cursor_resolve_mod("default") end, { desc = "Open File under the cursor in new buffer" })
 map({ "n", "i" }, "<F3>", function() open_file_under_the_cursor_resolve_mod("system") end, { desc = "Open File under the cursor with default app" })
 map({ "n", "i" }, "<F1>", function() open_file_under_the_cursor_resolve_mod("markup") end, { desc = "Open Markup under the cursor in new buffer" })
@@ -331,17 +360,6 @@ map({ "n", "i", "t" }, "<C-PageUp>", function()
   require("nvchad.tabufline").prev()
 end,{ desc = "Buffer next" })
 
-local function move_buf(direction, edge)
-  local buf_index = get_current_buf_index()
-  if buf_index == edge then
-    for _ = 1, #vim.t.bufs - 1 do
-      require("nvchad.tabufline").move_buf(-direction)
-    end
-  else
-    require("nvchad.tabufline").move_buf(direction)
-  end
-end
-
 map({ "n", "i", "t" }, "<C-S-PageDown>", function() move_buf(1, #vim.t.bufs) end, { desc = "Move buffer right" })
 map({ "n", "i", "t" }, "<C-S-PageUp>", function() move_buf(-1, 1) end, { desc = "Move buffer left" })
 
@@ -354,18 +372,6 @@ end, { desc = "Buffer close" })
 
 -- panes
 
-local function move_to_pane(move_keys)
-  local keys = move_keys
-  local mode = vim.api.nvim_get_mode().mode
-  if mode == "i" then
-    keys = "<ESC>" .. keys
-  elseif mode == "t" then
-    keys = "<C-\\><C-n>" .. keys
-  elseif mode == "v" then
-    keys = "<ESC>" .. keys
-  end
-  press(keys)
-end
 map({ "n", "i", "v", "t" }, "<A-Left>", function() move_to_pane("<C-w>h") end, { desc = "Move to left pane" })
 map({ "n", "i", "v", "t" }, "<A-Down>", function() move_to_pane("<C-w>j") end, { desc = "Move to lower pane" })
 map({ "n", "i", "v", "t" }, "<A-Up>", function() move_to_pane("<C-w>k") end, { desc = "Move to upper pane" })
