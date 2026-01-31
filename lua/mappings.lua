@@ -1,5 +1,6 @@
 require "nvchad.mappings"
 
+
 -- functions
 
 local function press(keys)
@@ -31,13 +32,6 @@ local function get_current_buf_index()
       end
   end
   return -1
-end
-
-local function resolve_mod(keys)
-  if vim.api.nvim_get_mode().mode == "i" then
-    keys = "<C-o>" .. keys
-  end
-  return keys
 end
 
 local function open_file_under_the_cursor(mode)
@@ -131,9 +125,38 @@ local function move_to_pane(move_keys)
   press(keys)
 end
 
+local function move_word_left()
+  local start_line = vim.fn.line(".")
+  press("<C-Left>")
+  vim.schedule(function()
+    local cur_line = vim.fn.line(".")
+    if cur_line ~= start_line then
+      local cur_line_len = #vim.fn.getbufline(vim.api.nvim_get_current_buf(), cur_line)[1]
+      vim.api.nvim_win_set_cursor(0, {cur_line, cur_line_len})
+    end
+  end)
+end
+
+local function move_word_right()
+  local last_char = is_last_char()
+  local start_line = vim.fn.line(".")
+  press("<C-Right>")
+  if last_char then
+    return
+  end
+  vim.schedule(function()
+    local cur_line = vim.fn.line(".")
+    if cur_line ~= start_line then
+      local start_line_len = #vim.fn.getbufline(vim.api.nvim_get_current_buf(), start_line)[1]
+      vim.api.nvim_win_set_cursor(0, {start_line, start_line_len})
+    end
+  end)
+end
+
 
 
 local map = vim.keymap.set
+
 
 -- base
 
@@ -193,35 +216,8 @@ map("n", "<Left>", function()
   end
 end, { desc = "Move left" })
 
-map({ "n", "i", "v" }, "<C-Left>", function()
-  local start_line = vim.fn.line(".")
-  local keys = resolve_mod("<C-Left>")
-  press(keys)
-  vim.schedule(function()
-    local cur_line = vim.fn.line(".")
-    if cur_line ~= start_line then
-      local cur_line_len = #vim.fn.getbufline(vim.api.nvim_get_current_buf(), cur_line)[1]
-      vim.api.nvim_win_set_cursor(0, {cur_line, cur_line_len})
-    end
-  end)
-end, { desc = "Move word left" })
-
-map({ "n", "i", "v" }, "<C-Right>", function()
-  local last_char = is_last_char()
-  local start_line = vim.fn.line(".")
-  local keys = resolve_mod("<C-Right>")
-  press(keys)
-  if last_char then
-    return
-  end
-  vim.schedule(function()
-    local cur_line = vim.fn.line(".")
-    if cur_line ~= start_line then
-      local start_line_len = #vim.fn.getbufline(vim.api.nvim_get_current_buf(), start_line)[1]
-      vim.api.nvim_win_set_cursor(0, {start_line, start_line_len})
-    end
-  end)
-end, { desc = "Move word right" })
+map({ "n", "i", "v" }, "<C-Left>", function() move_word_left() end, { desc = "Move word left" })
+map({ "n", "i", "v" }, "<C-Right>", function() move_word_right() end, { desc = "Move word right" })
 
 map("i", "<Up>", "<C-o>gk", { desc = "Move up" })
 map({ "n", "v" }, "<Up>", "gk", { desc = "Move up" })
@@ -269,7 +265,7 @@ map({ "n", "i", "v" }, "<C-y>", "<cmd> redo <cr>", { desc = "Change Redo" })
 -- NORMAL mod
 
 map("n", "d", '"_d')
-map("n", "xx", 'dd<ESC>')
+map("n", "xx", 'dd')
 map("n", "cc", 'yy')
 map("n", "c", 'y')
 map("n", "x", 'd')
@@ -294,42 +290,22 @@ map("v", "x", '"+x', { desc = "VISUAL cut" })
 map("v", "p", '"_dP', { desc = "VISUAL paste" })
 map("v", "P", '"_dP', { desc = "VISUAL paste" })
 
-map("i", "<S-Up>", function()
-  from_insert_to_normal()
-  press("vgko<Left>o")
-end, { desc = "VISUAL up from NORMAL" })
-map("i", "<C-S-Up>", function()
-  from_insert_to_normal()
-  press("v<C-Up>o<Left>o")
-end, { desc = "VISUAL up from NORMAL" })
+map("i", "<S-Up>", "<C-o>vgko<Left>o", { desc = "VISUAL up from NORMAL" })
+map("i", "<C-S-Up>", "<C-o>v<C-Up>o<Left>o", { desc = "VISUAL up from NORMAL" })
+map("i", "<S-Down>", "<C-o>vgj", { desc = "VISUAL down from NORMAL" })
+map("i", "<C-S-Down>", "<C-o>v<C-Down>", { desc = "VISUAL down from NORMAL" })
 
-map("i", "<S-Down>", function()
-  from_insert_to_normal()
-  press("vgj")
-end, { desc = "VISUAL down from NORMAL" })
-map("i", "<C-S-Down>", function()
-  from_insert_to_normal()
-  press("v<C-Down>")
-end, { desc = "VISUAL down from NORMAL" })
-
-map("i", "<S-Left>", function()
-  press("<Left>")
-  from_insert_to_normal()
-  press("v")
-end, { desc = "VISUAL left from NORMAL" })
+map("i", "<S-Left>", "<C-o>v<Left>oho", { desc = "VISUAL left from NORMAL" })
 map("i", "<C-S-Left>", function()
-  press("<Left>")
-  from_insert_to_normal()
-  press("v<C-Left>")
+  press("<C-o>v")
+  move_word_left()
+  press("oho")
 end, { desc = "VISUAL left from NORMAL" })
 
-map("i", "<S-Right>", function()
-  from_insert_to_normal()
-  press("v<Right>")
-end, { desc = "VISUAL right from NORMAL" })
+map("i", "<S-Right>", "<C-o>v", { desc = "VISUAL right from NORMAL" })
 map("i", "<C-S-Right>", function()
-  from_insert_to_normal()
-  press("v<C-Right>")
+  press("<C-o>v")
+  move_word_right()
 end, { desc = "VISUAL right from NORMAL" })
 
 map("n", "<S-Up>", "vgk", { desc = "VISUAL up from NORMAL" })
@@ -338,8 +314,14 @@ map("n", "<S-Left>", "v<Left>", { desc = "VISUAL left from NORMAL" })
 map("n", "<S-Right>", "v<Right>", { desc = "VISUAL right from NORMAL" })
 map("n", "<C-S-Up>", "v<C-Up>", { desc = "VISUAL up from NORMAL" })
 map("n", "<C-S-Down>", "v<C-Down>", { desc = "VISUAL down from NORMAL" })
-map("n", "<C-S-Left>", "v<C-Left>", { desc = "VISUAL left from NORMAL" })
-map("n", "<C-S-Right>", "v<C-Right>", { desc = "VISUAL right from NORMAL" })
+map("n", "<C-S-Left>", function()
+  press("v")
+  move_word_left()
+end, { desc = "VISUAL left from NORMAL" })
+map("n", "<C-S-Right>", function()
+  press("v")
+  move_word_right()
+end, { desc = "VISUAL right from NORMAL" })
 
 map("v", "<S-Up>", "gk")
 map("v", "<S-Down>", "gj")
@@ -347,8 +329,8 @@ map("v", "<S-Left>", "<Left>")
 map("v", "<S-Right>", "<Right>")
 map("v", "<C-S-Up>", "<C-Up>")
 map("v", "<C-S-Down>", "<C-Down>")
-map("v", "<C-S-Left>", "<C-Left>")
-map("v", "<C-S-Right>", "<C-Right>")
+map("v", "<C-S-Left>", function() move_word_left() end)
+map("v", "<C-S-Right>", function() move_word_right() end)
 
 
 -- buffers
@@ -362,7 +344,6 @@ end,{ desc = "Buffer next" })
 
 map({ "n", "i", "t" }, "<C-S-PageDown>", function() move_buf(1, #vim.t.bufs) end, { desc = "Move buffer right" })
 map({ "n", "i", "t" }, "<C-S-PageUp>", function() move_buf(-1, 1) end, { desc = "Move buffer left" })
-
 
 map({ "n", "i" }, "<C-n>", "<cmd> enew <cr>", { desc = "New buffer" })
 map({ "n", "i" }, "<C-q>", function()
