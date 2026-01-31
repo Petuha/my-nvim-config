@@ -332,6 +332,9 @@ map("v", "<C-S-Down>", "<C-Down>")
 map("v", "<C-S-Left>", function() move_word_left() end)
 map("v", "<C-S-Right>", function() move_word_right() end)
 
+map("v", "<", "<gv")
+map("v", ">", ">gv")
+
 
 -- buffers
 
