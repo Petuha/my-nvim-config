@@ -353,10 +353,46 @@ end, { desc = "Buffer close" })
 
 -- panes
 
-map({ "n", "i", "v", "t" }, "<A-Left>", function() move_to_pane("<C-w>h") end, { desc = "Move to left pane" })
-map({ "n", "i", "v", "t" }, "<A-Down>", function() move_to_pane("<C-w>j") end, { desc = "Move to lower pane" })
-map({ "n", "i", "v", "t" }, "<A-Up>", function() move_to_pane("<C-w>k") end, { desc = "Move to upper pane" })
-map({ "n", "i", "v", "t" }, "<A-Right>", function() move_to_pane("<C-w>l") end, { desc = "Move to right pane" })
+map({ "n", "i", "v", "t" }, "<M-Left>", function() move_to_pane("<C-w>h") end, { desc = "Pane Move to left" })
+map({ "n", "i", "v", "t" }, "<M-Down>", function() move_to_pane("<C-w>j") end, { desc = "Pane Move to lower" })
+map({ "n", "i", "v", "t" }, "<M-Up>", function() move_to_pane("<C-w>k") end, { desc = "Pane Move to upper" })
+map({ "n", "i", "v", "t" }, "<M-Right>", function() move_to_pane("<C-w>l") end, { desc = "Pane Move to right" })
+
+local resize_step = 3
+
+map({ "n", "i", "v", "t" }, "<M-C-Left>", function()
+  local cur_win = vim.api.nvim_get_current_win()
+  if vim.fn.win_screenpos(cur_win)[2] > 1 and vim.fn.winnr('l') == vim.fn.winnr() then
+    vim.cmd("vertical resize +" .. resize_step)
+  else
+    vim.cmd("vertical resize -" .. resize_step)
+  end
+end, { desc = "Pane Resize to left" })
+
+map({ "n", "i", "v", "t" }, "<M-C-Right>", function()
+  local cur_win = vim.api.nvim_get_current_win()
+  if vim.fn.win_screenpos(cur_win)[2] > 1 and vim.fn.winnr('l') == vim.fn.winnr() then
+    vim.cmd("vertical resize -" .. resize_step)
+  else
+    vim.cmd("vertical resize +" .. resize_step)
+  end
+end, { desc = "Pane Resize to right" })
+
+map({ "n", "i", "v", "t" }, "<M-C-Up>", function()
+  if vim.fn.winnr('j') == vim.fn.winnr() then
+    vim.cmd("resize +" .. resize_step)
+  else
+    vim.cmd("resize -" .. resize_step)
+  end
+end, { desc = "Pane Resize to upper" })
+
+map({ "n", "i", "v", "t" }, "<M-C-Down>", function()
+  if vim.fn.winnr('j') == vim.fn.winnr() then
+    vim.cmd("resize -" .. resize_step)
+  else
+    vim.cmd("resize +" .. resize_step)
+  end
+end, { desc = "Pane Resize to lower" })
 
 
 -- CMake
