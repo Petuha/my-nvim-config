@@ -23,6 +23,16 @@ local function from_insert_to_normal()
   end
 end
 
+local function get_current_buf_index()
+  local current_buf = vim.api.nvim_get_current_buf()
+  for i, buf_id in ipairs(vim.t.bufs) do
+      if buf_id == current_buf then
+          return i
+      end
+  end
+  return -1
+end
+
 
 -- base
 
@@ -63,7 +73,7 @@ map({ "n", "i", "v" }, "<C-t>", function()
       return
     end
   end
-  print "No recently closed files found."
+  vim.notify("No recently closed files found.", vim.log.levels.WARN)
 end, { desc = "Open last closed file" })
 
 
@@ -134,7 +144,7 @@ map({ "n", "i", "v" }, "<C-d>", "")
 map({ "n", "i", "v" }, "<C-Up>", "<cmd>normal! <C-y><cr>", { desc = "Move screen up" })
 map({ "n", "i", "v" }, "<C-Down>", "<cmd>normal! <C-e><cr>", { desc = "Move screen down" })
 
-local function open_file_under_the_cursor()
+local function open_file_under_the_cursor(mode)
   local file_path = vim.fn.expand("<cfile>")
   -- "^%a+://" - link like "http://..."
   if file_path:match("^%a+://") then
@@ -156,30 +166,52 @@ local function open_file_under_the_cursor()
       vim.notify("Directory 'data' not found", vim.log.levels.ERROR)
       return
     end
-  elseif file_path:match("^/") or file_path:match("^~/") then
+  elseif file_path:match("^/") then
     absolute_path = file_path
+  elseif file_path:match("^~/") then
+    absolute_path = vim.fn.expand(file_path)
   else
     absolute_path = vim.fn.expand("%:p:h") .. "/" .. file_path
   end
 
-  -- local text_extensions = { "txt", "json" }
-  -- local ext = vim.fn.fnamemodify(absolute_path, ":e")
-  -- if vim.tbl_contains(text_extensions, ext) or vim.fn.filereadable(absolute_path) == 1 then
-  --   vim.cmd("edit " .. vim.fn.fnameescape(absolute_path))
-  -- else
-  --   vim.ui.open(absolute_path)
-  -- end
-  vim.cmd("edit " .. vim.fn.fnameescape(absolute_path))
+  if mode == "markup" then
+    absolute_path = absolute_path:gsub("images", "markup", 1) .. ".json"
+  end
 
+  if not vim.uv.fs_stat(absolute_path) then
+    vim.notify("File does not exist: " .. absolute_path, vim.log.levels.WARN)
+    return
+  end
+
+  if mode == "system" then
+    vim.ui.open(absolute_path)
+  else
+    local bufexists = vim.fn.bufexists(absolute_path) ~= 0
+    local current_buf = get_current_buf_index()
+    vim.cmd("edit " .. vim.fn.fnameescape(absolute_path))
+    local new_buf = get_current_buf_index()
+    if bufexists then
+      return
+    end
+    -- opened buffer is in the end -> move it a bit to left
+    for _ = 1, new_buf - current_buf - 1 do
+        require("nvchad.tabufline").move_buf(-1)
+    end
+  end
 end
-map("n", "<F4>", function()
-  open_file_under_the_cursor()
-end, { desc = "Open File under the cursor" })
-map("i", "<F4>", function()
-  from_insert_to_normal()
-  open_file_under_the_cursor()
-  press("i")
-end, { desc = "Open File under the cursor" })
+local function open_file_under_the_cursor_resolve_mod(open_mode)
+  local mode = vim.api.nvim_get_mode().mode
+  if mode == "i" then
+    from_insert_to_normal()
+  end
+  open_file_under_the_cursor(open_mode)
+  if mode == "i" then
+    press("i")
+  end
+end
+map({ "n", "i" }, "<F4>", function() open_file_under_the_cursor_resolve_mod("default") end, { desc = "Open File under the cursor in new buffer" })
+map({ "n", "i" }, "<F3>", function() open_file_under_the_cursor_resolve_mod("system") end, { desc = "Open File under the cursor with default app" })
+map({ "n", "i" }, "<F1>", function() open_file_under_the_cursor_resolve_mod("markup") end, { desc = "Open Markup under the cursor in new buffer" })
 
 
 -- delete words
@@ -218,6 +250,7 @@ map("n", "x", 'd')
 
 map("i", "<C-w>", "<cmd> delete _ <cr>", { desc = "INSERT Delete current line" })
 map({ "n", "i" }, "<C-d>", "<cmd> t. <cr>", { desc = "INSERT Duplicate current line" })
+
 
 -- VISUAL mod
 
