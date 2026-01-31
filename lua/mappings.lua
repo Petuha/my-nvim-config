@@ -331,12 +331,19 @@ map({ "n", "i", "t" }, "<C-PageUp>", function()
   require("nvchad.tabufline").prev()
 end,{ desc = "Buffer next" })
 
-map({ "n", "i", "t" }, "<C-S-PageDown>", function()
-  require("nvchad.tabufline").move_buf(1)
-end, { desc = "Move buffer right" })
-map({ "n", "i", "t" }, "<C-S-PageUp>", function()
-  require("nvchad.tabufline").move_buf(-1)
-end, { desc = "Move buffer left" })
+local function move_buf(direction, edge)
+  local buf_index = get_current_buf_index()
+  if buf_index == edge then
+    for _ = 1, #vim.t.bufs - 1 do
+      require("nvchad.tabufline").move_buf(-direction)
+    end
+  else
+    require("nvchad.tabufline").move_buf(direction)
+  end
+end
+
+map({ "n", "i", "t" }, "<C-S-PageDown>", function() move_buf(1, #vim.t.bufs) end, { desc = "Move buffer right" })
+map({ "n", "i", "t" }, "<C-S-PageUp>", function() move_buf(-1, 1) end, { desc = "Move buffer left" })
 
 
 map({ "n", "i" }, "<C-n>", "<cmd> enew <cr>", { desc = "New buffer" })
