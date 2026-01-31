@@ -164,6 +164,8 @@ map("n", ";", ":", { desc = "CMD enter command mod" })
 map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>", { desc = "Save file" })
 map({ "n", "i", "v" }, "<C-e>", "<ESC><cmd> NvimTreeToggle <cr>", { desc = "File explorer toggle" })
 
+map({ "n", "i", "v" }, "<C-z>", "<cmd> undo <cr>", { desc = "Change Undo" })
+map({ "n", "i", "v" }, "<C-y>", "<cmd> redo <cr>", { desc = "Change Redo" })
 
 map("n", "<C-x>", "i", { desc = "ChangeMod To INSERT" })
 map("n", "a", "i", { desc = "ChangeMod To INSERT" })
@@ -238,6 +240,14 @@ map({ "n", "i" }, "<F4>", function() open_file_under_the_cursor_resolve_mod("def
 map({ "n", "i" }, "<F3>", function() open_file_under_the_cursor_resolve_mod("system") end, { desc = "Open File under the cursor with default app" })
 map({ "n", "i" }, "<F1>", function() open_file_under_the_cursor_resolve_mod("markup") end, { desc = "Open Markup under the cursor in new buffer" })
 
+map("n", "<End>", function()
+  if not (is_first_char() and is_last_char()) then
+    press("<End><Right>")
+  else
+    press("<End>")
+  end
+end)
+
 
 -- delete words
 
@@ -254,12 +264,6 @@ map("i", "<C-H>", "<C-w>", { desc = "Delete previous word with Ctrl + Backspace"
 
 map("i", "<C-Del>", "<C-o>\"_dw", { desc = "Delete next word with Ctrl + Delete" })
 -- map("n", "<C-Del>", "dw", { desc = "Delete next word with Ctrl + Delete" })
-
-
--- undo / redo
-
-map({ "n", "i", "v" }, "<C-z>", "<cmd> undo <cr>", { desc = "Change Undo" })
-map({ "n", "i", "v" }, "<C-y>", "<cmd> redo <cr>", { desc = "Change Redo" })
 
 
 -- NORMAL mod
