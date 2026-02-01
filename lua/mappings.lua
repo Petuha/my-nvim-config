@@ -163,7 +163,17 @@ local map = vim.keymap.set
 map("n", ";", ":", { desc = "CMD enter command mod" })
 map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>", { desc = "Save file" })
 map({ "n", "i", "v" }, "<C-q>", "<cmd> q <cr>", { desc = "Close window" })
-map({ "n", "i", "v" }, "<C-e>", "<ESC><cmd> NvimTreeToggle <cr>", { desc = "File explorer toggle" })
+map({ "n", "i", "v" }, "<C-e>", function()
+  if vim.api.nvim_get_mode().mode == "i" then
+    vim.cmd("stopinsert")
+  end
+  local api = require("nvim-tree.api")
+  api.tree.toggle()
+end, { desc = "NvimTree toggle" })
+map("n", "<leader>e", function()
+  local api = require("nvim-tree.api")
+  api.tree.toggle({ current_window = true })
+end, { desc = "NvimTree toggle full screen" })
 
 map({ "n", "i", "v" }, "<C-z>", "<cmd> undo <cr>", { desc = "Change Undo" })
 map({ "n", "i", "v" }, "<C-y>", "<cmd> redo <cr>", { desc = "Change Redo" })
