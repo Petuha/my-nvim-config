@@ -65,7 +65,10 @@ return {
         local api = require("nvim-tree.api")
         api.config.mappings.default_on_attach(bufnr)
         vim.keymap.del("n", "<C-e>", { buffer = bufnr })
-      end,
+        vim.keymap.set("n", "<C-f>", function()
+          require("telescope.builtin").find_files()
+        end, { buffer = bufnr, noremap = true })
+      end
     },
     config = function(_, opts)
       require("nvim-tree").setup(opts)
@@ -147,6 +150,14 @@ return {
   {
     "mason-org/mason.nvim",
     opts = require "configs.mason"
+  },
+
+  {
+    "nvim-telescope/telescope.nvim",
+    --dependencies = { "nvim-treesitter/nvim-treesitter" },
+    opts = function()
+      return require "configs.telescope"
+    end,
   },
 
 }

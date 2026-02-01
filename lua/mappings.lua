@@ -187,12 +187,7 @@ end, { desc = "ChangeMod To NORMAL" })
 map("v", "<C-x>", "<ESC>", { desc = "ChangeMod To NORMAL" })
 map("v", "<C-c>", "")
 
-map({ "n", "v" }, "<C-f>", "<ESC>/", { desc = "Find" })
-map("i", "<C-f>", function()
-  from_insert_to_normal()
-  press("<ESC>/")
-end, { desc = "Find" })
-map("c", "<C-f>", "<C-c>", { desc = "Find cancel" })
+map({ "n", "i", "v" }, "<C-f>", "<cmd>Telescope current_buffer_fuzzy_find<cr>", { desc = "Find in current buffer" })
 
 map({ "n", "i", "v" }, "<C-g>", "<cmd>normal! za<cr>", { desc = "Fold toggle" })
 
