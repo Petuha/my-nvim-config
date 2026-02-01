@@ -409,6 +409,7 @@ end, { desc = "Pane Resize to lower" })
 map({ "n", "i", "v" }, "<C-b>", "<cmd> CMakeBuild <cr>", { desc = "CMake run" })
 map({ "n", "i", "v" }, "<C-r>", "<cmd> CMakeRun <cr>", { desc = "CMake build" })
 map({ "n" }, "<leader>cg", "<cmd> CMakeGenerate <cr>", { desc = "CMake generate" })
+map({ "n" }, "<leader>cd", "<cmd> CMakeDebug <cr>", { desc = "CMake debug" })
 
 
 -- clang-format

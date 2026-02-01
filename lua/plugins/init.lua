@@ -105,6 +105,10 @@ return {
       "mfussenegger/nvim-dap",
     },
     config = function()
+      -- fix breaking shortcut
+      local function reset_cw_mapping()
+        vim.keymap.set({ "n", "i" }, "<C-w>", function() require("nvchad.tabufline").close_buffer() end, { desc = "Buffer close", nowait = true })
+      end
       local dap = require("dap")
       local dapui = require("dapui")
       dapui.setup()
@@ -113,9 +117,11 @@ return {
       end
       dap.listeners.before.event_terminated["dapui_config"] = function()
         dapui.close()
+        reset_cw_mapping()
       end
       dap.listeners.before.event_exited["dapui_config"] = function()
         dapui.close()
+        reset_cw_mapping()
       end
     end
   },
