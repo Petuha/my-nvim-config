@@ -162,6 +162,7 @@ local map = vim.keymap.set
 
 map("n", ";", ":", { desc = "CMD enter command mod" })
 map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>", { desc = "Save file" })
+map({ "n", "i", "v" }, "<C-q>", "<cmd> q <cr>", { desc = "Close window" })
 map({ "n", "i", "v" }, "<C-e>", "<ESC><cmd> NvimTreeToggle <cr>", { desc = "File explorer toggle" })
 
 map({ "n", "i", "v" }, "<C-z>", "<cmd> undo <cr>", { desc = "Change Undo" })
@@ -174,7 +175,7 @@ map("i", "<C-x>", function()
 end, { desc = "ChangeMod To NORMAL" })
 
 map("v", "<C-x>", "<ESC>", { desc = "ChangeMod To NORMAL" })
-map({ "n", "i", "v" }, "<C-c>", "")
+map("v", "<C-c>", "")
 
 map({ "n", "v" }, "<C-f>", "<ESC>/", { desc = "Find" })
 map("i", "<C-f>", function()
@@ -231,7 +232,7 @@ map("i", "<PageDown>", "<C-o><C-d>", { desc = "Move half page down" })
 map({ "n", "v" }, "<PageUp>", "<C-u>", { desc = "Move half page up" })
 map({ "n", "v" }, "<PageDown>", "<C-d>", { desc = "Move half page down" })
 map({ "n", "i", "v" }, "<C-u>", "")
-map({ "n", "i", "v" }, "<C-d>", "")
+map("v", "<C-d>", "")
 
 map({ "n", "i", "v" }, "<C-Up>", "<cmd>normal! <C-y><cr>", { desc = "Move screen up" })
 map({ "n", "i", "v" }, "<C-Down>", "<cmd>normal! <C-e><cr>", { desc = "Move screen down" })
@@ -249,7 +250,7 @@ map("n", "<End>", function()
 end)
 
 
--- delete words
+-- editing
 
 map("n", "<Del>", "")
 map("n", "<C-Del>", "")
@@ -265,6 +266,9 @@ map("i", "<C-H>", "<C-w>", { desc = "Delete previous word with Ctrl + Backspace"
 map("i", "<C-Del>", "<C-o>\"_dw", { desc = "Delete next word with Ctrl + Delete" })
 -- map("n", "<C-Del>", "dw", { desc = "Delete next word with Ctrl + Delete" })
 
+map({ "n", "i" }, "<C-d>", "<cmd> delete _ <cr>", { desc = "EDIT Delete current line" })
+map({ "n", "i" }, "<C-c>", "<cmd> t. <cr>", { desc = "EDIT Duplicate current line" })
+
 
 -- NORMAL mod
 
@@ -273,12 +277,7 @@ map("n", "xx", 'dd')
 map("n", "cc", 'yy')
 map("n", "c", 'y')
 map("n", "x", 'd')
-
-
--- INSERT mod
-
-map("i", "<C-w>", "<cmd> delete _ <cr>", { desc = "INSERT Delete current line" })
-map({ "n", "i" }, "<C-d>", "<cmd> t. <cr>", { desc = "INSERT Duplicate current line" })
+map("n", "<C-l>", "<C-w>")
 
 
 -- VISUAL mod
@@ -353,9 +352,7 @@ map({ "n", "i", "t" }, "<C-S-PageDown>", function() move_buf(1, #vim.t.bufs) end
 map({ "n", "i", "t" }, "<C-S-PageUp>", function() move_buf(-1, 1) end, { desc = "Move buffer left" })
 
 map({ "n", "i" }, "<C-n>", "<cmd> enew <cr>", { desc = "New buffer" })
-map({ "n", "i" }, "<C-q>", function()
-  require("nvchad.tabufline").close_buffer()
-end, { desc = "Buffer close" })
+map({ "n", "i" }, "<C-w>", function() require("nvchad.tabufline").close_buffer() end, { desc = "Buffer close", nowait = true })
 
 
 -- panes
