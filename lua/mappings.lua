@@ -162,17 +162,18 @@ local map = vim.keymap.set
 
 map("n", ";", ":", { desc = "CMD enter command mod" })
 map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>", { desc = "Save file" })
-map({ "n", "i", "v" }, "<C-q>", "<cmd> q <cr>", { desc = "Close window" })
-map({ "n", "i", "v" }, "<C-e>", function()
-  if vim.api.nvim_get_mode().mode == "i" then
-    vim.cmd("stopinsert")
-  end
-  local api = require("nvim-tree.api")
-  api.tree.toggle()
-end, { desc = "NvimTree toggle" })
+-- map({ "n", "i", "v" }, "<C-q>", "<cmd> q <cr>", { desc = "Close window" })
+-- map({ "n", "i", "v" }, "<C-e>", function()
+--   if vim.api.nvim_get_mode().mode == "i" then
+--     vim.cmd("stopinsert")
+--   end
+--   local api = require("nvim-tree.api")
+--   api.tree.toggle()
+-- end, { desc = "NvimTree toggle" })
 map("n", "<leader>e", function()
   local api = require("nvim-tree.api")
-  api.tree.toggle({ current_window = true })
+  -- api.tree.toggle({ current_window = true })
+  api.tree.toggle()
 end, { desc = "NvimTree toggle full screen" })
 
 map({ "n", "i", "v" }, "<C-z>", "<cmd> undo <cr>", { desc = "Change Undo" })
@@ -280,9 +281,9 @@ map({ "n", "i" }, "<C-c>", "<cmd> t. <cr>", { desc = "EDIT Duplicate current lin
 map("n", "d", '"_d')
 map("n", "xx", 'dd')
 map("n", "cc", 'yy')
-map("n", "c", 'y')
+-- map("n", "c", 'y')
 map("n", "x", 'd')
-map("n", "<C-l>", "<C-w>")
+-- map("n", "<C-l>", "<C-w>")
 
 
 -- VISUAL mod
@@ -357,7 +358,7 @@ map({ "n", "i", "t" }, "<C-S-PageDown>", function() move_buf(1, #vim.t.bufs) end
 map({ "n", "i", "t" }, "<C-S-PageUp>", function() move_buf(-1, 1) end, { desc = "Move buffer left" })
 
 map({ "n", "i" }, "<C-n>", "<cmd> enew <cr>", { desc = "New buffer" })
-map({ "n", "i" }, "<C-w>", function() require("nvchad.tabufline").close_buffer() end, { desc = "Buffer close", nowait = true })
+map({ "n", "i" }, "<C-q>", function() require("nvchad.tabufline").close_buffer() end, { desc = "Buffer close", nowait = true })
 
 
 -- panes

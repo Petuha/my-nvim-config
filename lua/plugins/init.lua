@@ -166,4 +166,29 @@ return {
     end,
   },
 
+  {
+    "mikavilpas/yazi.nvim",
+    version = "26.1.22",
+    event = "VeryLazy",
+    dependencies = {
+      { "nvim-lua/plenary.nvim", lazy = true },
+    },
+    keys = {
+      {
+        mode = { "n", "i", "v" },
+        "<C-e>",
+        "<cmd>Yazi cwd<cr>",
+        desc = "Resume the last yazi session",
+      },
+    },
+    opts = {
+      open_for_directories = false,
+      keymaps = {
+        show_help = "g?",
+      },
+    },
+    init = function()
+    end,
+  }
+
 }
