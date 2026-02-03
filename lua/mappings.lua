@@ -127,7 +127,7 @@ end
 
 local function move_word_left()
   local start_line = vim.fn.line(".")
-  press("<C-Left>")
+  press("b")
   vim.schedule(function()
     local cur_line = vim.fn.line(".")
     if cur_line ~= start_line then
@@ -140,7 +140,7 @@ end
 local function move_word_right()
   local last_char = is_last_char()
   local start_line = vim.fn.line(".")
-  press("<C-Right>")
+  press("e")
   if last_char then
     return
   end
@@ -225,8 +225,8 @@ map("n", "<Left>", function()
   end
 end, { desc = "Move left" })
 
-map({ "n", "i", "v" }, "<C-Left>", function() move_word_left() end, { desc = "Move word left" })
-map({ "n", "i", "v" }, "<C-Right>", function() move_word_right() end, { desc = "Move word right" })
+map({ "n", "v" }, "<C-Left>", function() move_word_left() end, { desc = "Move word left" })
+map({ "n", "v" }, "<C-Right>", function() move_word_right() end, { desc = "Move word right" })
 
 map("i", "<Up>", "<C-o>gk", { desc = "Move up" })
 map({ "n", "v" }, "<Up>", "gk", { desc = "Move up" })
