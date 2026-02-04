@@ -426,6 +426,21 @@ map("v", "f", function()
 end, { desc = "Format selection" })
 
 
+-- LSP
+
+map("n", "gh", function()
+  vim.lsp.buf.clear_references()
+  vim.cmd("noh")
+  vim.lsp.buf.document_highlight()
+end, { desc = "LSP Highlight symbol" })
+
+map("n", "<Esc>", function()
+  vim.lsp.buf.clear_references()
+  vim.cmd("noh")
+  return "<Esc>"
+end, { expr = true, desc = "LSP Clear highlights" })
+
+
 -- debugger
 
 map("n", "<F5>", function() require("dap").continue() end, { desc = "DAP Continue" })
