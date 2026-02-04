@@ -2,6 +2,8 @@ require "nvchad.options"
 
 vim.opt.guicursor:append "t:ver25-blinkon0"
 
+vim.opt.wildmode = "longest:full,full"
+
 local opt = vim.opt
 
 opt.wrap = true
